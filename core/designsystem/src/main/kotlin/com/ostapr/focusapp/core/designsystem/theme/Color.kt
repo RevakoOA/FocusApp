@@ -1,4 +1,4 @@
-package com.ostapr.focusapp.ui.theme
+package com.ostapr.focusapp.core.designsystem.theme
 
 import androidx.compose.ui.graphics.Color
 

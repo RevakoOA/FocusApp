@@ -1,9 +1,11 @@
 [versions]
+androidDesugarJdkLibs = "2.0.3"
 androidGradlePlugin = "8.1.1"
 androidxActivity = "1.8.0-alpha07"
 androidxAppCompat = "1.6.1"
+androidxComposeBom = "2023.06.01"
 androidxComposeCompiler = "1.5.0"
-androidxComposeRuntimeTracing = "1.0.0-alpha04"
+androidxComposeRuntimeTracing = "1.0.0-alpha03"
 androidxCore = "1.10.1"
 androidxHiltNavigationCompose = "1.0.0"
 androidxLifecycle = "2.6.1"
@@ -15,6 +17,7 @@ androidxTestRunner = "1.5.2"
 coil = "2.4.0"
 hilt = "2.47"
 hiltExt = "1.0.0"
+jacoco = "0.8.7"
 junit4 = "4.13.2"
 kotlin = "1.9.0"
 kotlinxCoroutines = "1.7.3"
@@ -23,10 +26,16 @@ lint = "31.1.1"
 okhttp = "4.10.0"
 retrofit = "2.9.0"
 room = "2.5.2"
+org-jetbrains-kotlin-android = "1.8.10"
+junit = "1.1.5"
+espresso-core = "3.5.1"
+material = "1.9.0"
 
 [libraries]
+android-desugarJdkLibs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "androidDesugarJdkLibs" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivity" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidxAppCompat" }
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "androidxComposeBom" }
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
 androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout" }
 androidx-compose-material-iconsExtended = { group = "androidx.compose.material", name = "material-icons-extended" }
@@ -75,6 +84,10 @@ room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
+junit = { group = "androidx.test.ext", name = "junit", version.ref = "junit" }
+espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+androidx-ui-tooling-preview-android = { group = "androidx.compose.ui", name = "ui-tooling-preview-android" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
@@ -84,3 +97,4 @@ hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "org-jetbrains-kotlin-android" }

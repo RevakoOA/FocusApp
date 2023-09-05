@@ -1,4 +1,4 @@
-package com.ostapr.focusapp.ui.theme
+package com.ostapr.focusapp.core.designsystem.theme
 
 import android.app.Activity
 import android.os.Build

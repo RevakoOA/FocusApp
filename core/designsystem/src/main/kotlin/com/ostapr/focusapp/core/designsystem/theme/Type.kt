@@ -1,4 +1,4 @@
-package com.ostapr.focusapp.ui.theme
+package com.ostapr.focusapp.core.designsystem.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
