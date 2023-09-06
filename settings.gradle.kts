@@ -18,12 +18,15 @@ dependencyResolutionManagement {
 rootProject.name = "FocusApp"
 
 include(":app")
+
 include(":core:designsystem")
 include(":core:testing")
 include(":core:ui")
-include(":feature:status")
 include(":core:model")
 include(":core:database")
 include(":core:data")
 include(":core:network")
 include(":core:common")
+include(":core:status-gatherer")
+
+include(":feature:status")

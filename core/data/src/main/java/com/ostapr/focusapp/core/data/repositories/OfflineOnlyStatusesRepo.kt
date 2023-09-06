@@ -1,13 +1,11 @@
 package com.ostapr.focusapp.core.data.repositories
 
 import com.ostapr.focusapp.core.common.dispatchers.Dispatcher
-import com.ostapr.focusapp.core.common.dispatchers.FocusAppDispatchers
 import com.ostapr.focusapp.core.common.dispatchers.FocusAppDispatchers.IO
 import com.ostapr.focusapp.core.database.dao.FocusDao
 import com.ostapr.focusapp.core.database.model.InstalledAppEntity
 import com.ostapr.focusapp.core.database.model.StatusAppCrossRef
 import com.ostapr.focusapp.core.database.model.StatusEntity
-import com.ostapr.focusapp.core.database.relations.StatusDetails
 import com.ostapr.focusapp.core.model.data.FocusStatusDetails
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -38,9 +36,10 @@ class OfflineOnlyStatusesRepo @Inject constructor(
         now: Instant,
         recentDuration: Duration
     ): List<FocusStatusDetails> = withContext(ioDispatcher) {
-        focusAppDao.deleteOldStatuses(now, recentDuration)
+        val beforeDate = (now - recentDuration).toString()
+        focusAppDao.deleteOldStatuses(beforeDate)
 
-        val statusesDetails = focusAppDao.getStatuses(now, recentDuration)
+        val statusesDetails = focusAppDao.getStatuses()
 
         statusesDetails.map { it.convertToCoreStatusDetails() }
     }

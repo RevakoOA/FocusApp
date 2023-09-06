@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gatherer_notification_title">Focus App</string>
+    <string name="gatherer_notification_channel_name">Status Gatherer</string>
+    <string name="gatherer_notification_channel_description">Background status gatherer for Focus App</string>
+</resources>

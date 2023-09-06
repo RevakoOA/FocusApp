@@ -6,28 +6,23 @@ plugins {
 }
 
 android {
-    buildFeatures {
-        buildConfig = true
-    }
-    namespace = "com.ostapr.focusapp.core.network"
+    namespace = "com.ostapr.focusapp.core.status-gatherer"
     testOptions {
         unitTests {
             isIncludeAndroidResources = true
+            isReturnDefaultValues = true
         }
     }
 }
 
 dependencies {
     implementation(project(":core:model"))
-    implementation(libs.coil.kt)
-    implementation(libs.coil.kt.svg)
+    implementation(project(":core:data"))
+
+    implementation(libs.androidx.core.ktx)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.datetime)
-    implementation(libs.kotlinx.serialization.json)
-    implementation(libs.okhttp.logging)
-    implementation(libs.retrofit.core)
-    implementation(libs.retrofit.kotlin.serialization)
+    implementation(libs.androidx.work.runtime.ktx)
 
     testImplementation(project(":core:testing"))
-    testImplementation(libs.junit)
 }
