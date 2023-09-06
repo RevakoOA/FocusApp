@@ -26,10 +26,14 @@ import androidx.room.Index
         Index(value = ["status_id"]),
     ]
 )
-data class StatusesInstalledAppsCrossRef(
+data class StatusAppCrossRef(
     @ColumnInfo(name = "status_id")
     val statusId: Long,
 
     @ColumnInfo("app_id")
     val appId: Long,
-)
+) {
+    companion object {
+        fun createFrom(statusId: Long, appId: Long) = StatusAppCrossRef(statusId, appId)
+    }
+}

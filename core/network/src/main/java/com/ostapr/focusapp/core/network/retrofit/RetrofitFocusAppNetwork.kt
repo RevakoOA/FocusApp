@@ -3,6 +3,7 @@ package com.ostapr.focusapp.core.network.retrofit
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.ostapr.focusapp.core.network.FocusAppNetworkDataSource
 import com.ostapr.focusapp.core.network.model.DelayInfo
+import com.ostapr.focusapp.core.model.data.DelayInfo as CoreDelayInfo
 import com.ostapr.focusapp.core.network.retrofit.RetrofitFocusAppNetworkApi.Companion.FOCUS_APP_BASE_URL
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -40,6 +41,6 @@ class RetrofitFocusAppNetwork @Inject constructor(
         .create(RetrofitFocusAppNetworkApi::class.java)
 
 
-    override suspend fun getUpdateDelay(): DelayInfo =
-        DelayInfo.parseFromJsonArray(networkApi.getDelay())
+    override suspend fun getUpdateDelay(): CoreDelayInfo =
+        DelayInfo.parseFromJsonArray(networkApi.getDelay()).toCoreModel()
 }

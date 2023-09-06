@@ -1,11 +1,13 @@
 package com.ostapr.focusapp.core.network.model
 
+import com.ostapr.focusapp.core.model.data.Minutes
+import com.ostapr.focusapp.core.model.data.DelayInfo as CoreDelayInfo
 import org.json.JSONArray
 
-@JvmInline
-value class Minutes(private val value: Int)
+internal data class DelayInfo(val minutes: Minutes) {
 
-data class DelayInfo(val minutes: Minutes) {
+    fun toCoreModel() = CoreDelayInfo(minutes)
+
     companion object {
         private const val INTERVAL_IN_MINUTES = "intervalInMinutes"
 

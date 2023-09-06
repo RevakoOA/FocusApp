@@ -1,7 +1,6 @@
 package com.ostapr.focusapp.core.network
 
-import com.ostapr.focusapp.core.network.model.DelayInfo
-
+import com.ostapr.focusapp.core.model.data.DelayInfo
 
 interface FocusAppNetworkDataSource {
 

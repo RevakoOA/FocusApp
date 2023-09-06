@@ -1,6 +1,6 @@
 package com.ostapr.focusapp.core.model.data
 
-import java.time.LocalDateTime
+import kotlinx.datetime.LocalDateTime
 
 data class FocusStatusDetails(
     val id: Long,
