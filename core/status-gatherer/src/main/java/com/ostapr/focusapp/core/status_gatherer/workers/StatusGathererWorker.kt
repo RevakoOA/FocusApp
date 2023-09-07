@@ -35,7 +35,10 @@ class StatusGathererWorker(
 
         val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
         val status = FocusStatusDetails(now, installedApps)
-        statusesRepo.addStatus(status)
+        statusesRepo.apply  {
+            removeOldStatuses()
+            addStatus(status)
+        }
 
         GathererInitializer.initializeNextRequest(applicationContext, interval.minutes)
 

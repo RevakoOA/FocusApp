@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "637d1e8a395f2edac4e16cace03c4a3d",
+    "identityHash": "1886b741c73ca06678d1d8533bc569df",
     "entities": [
       {
         "tableName": "StatusEntity",
@@ -32,7 +32,7 @@
       },
       {
         "tableName": "InstalledAppEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `imageUri` TEXT NOT NULL, `name` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `imageUri` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -41,14 +41,14 @@
             "notNull": true
           },
           {
-            "fieldPath": "imageUri",
-            "columnName": "imageUri",
+            "fieldPath": "name",
+            "columnName": "name",
             "affinity": "TEXT",
             "notNull": true
           },
           {
-            "fieldPath": "name",
-            "columnName": "name",
+            "fieldPath": "imageUri",
+            "columnName": "imageUri",
             "affinity": "TEXT",
             "notNull": true
           }
@@ -61,12 +61,81 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "statuses_apps",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`status_id` INTEGER NOT NULL, `app_id` INTEGER NOT NULL, PRIMARY KEY(`status_id`, `app_id`), FOREIGN KEY(`status_id`) REFERENCES `StatusEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`app_id`) REFERENCES `InstalledAppEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "statusId",
+            "columnName": "status_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "appId",
+            "columnName": "app_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "status_id",
+            "app_id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_statuses_apps_status_id",
+            "unique": false,
+            "columnNames": [
+              "status_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_statuses_apps_status_id` ON `${TABLE_NAME}` (`status_id`)"
+          },
+          {
+            "name": "index_statuses_apps_app_id",
+            "unique": false,
+            "columnNames": [
+              "app_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_statuses_apps_app_id` ON `${TABLE_NAME}` (`app_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "StatusEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "status_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          },
+          {
+            "table": "InstalledAppEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "app_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '637d1e8a395f2edac4e16cace03c4a3d')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1886b741c73ca06678d1d8533bc569df')"
     ]
   }
 }

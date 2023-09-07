@@ -6,7 +6,8 @@ import com.ostapr.focusapp.core.model.data.InstalledAppInfo
 
 @Entity
 data class InstalledAppEntity(
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
+    var id: Long = 0,
     val name: String,
     val imageUri: String,
 ) {
@@ -14,6 +15,6 @@ data class InstalledAppEntity(
 
     companion object {
         fun createFromCoreInstalledApp(core: InstalledAppInfo) =
-            InstalledAppEntity(name = core.appName, imageUri = core.iconUri)
+            InstalledAppEntity(name = core.appName, imageUri = core.packageName)
     }
 }

@@ -4,10 +4,12 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import com.ostapr.focusapp.core.database.model.InstalledAppEntity
 import com.ostapr.focusapp.core.database.model.StatusAppCrossRef
 import com.ostapr.focusapp.core.database.model.StatusEntity
 import com.ostapr.focusapp.core.database.relations.StatusDetails
+import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.Instant
 import kotlin.time.Duration
 
@@ -27,15 +29,10 @@ interface FocusDao {
      * Before calling this, [deleteOldStatuses] should be called,
      * so all remaining statuses are recent statuses.
      */
+    @Transaction
     @Query("SELECT * FROM StatusEntity")
-    suspend fun getStatuses(now: Instant, duration: Duration): List<StatusDetails>
+    fun getStatuses(): Flow<List<StatusDetails>>
 
-
-    suspend fun deleteOldStatuses(now: Instant, duration: Duration): Int {
-        val from = now - duration
-        return removeOldStatus(from)
-    }
-
-    @Query("DELETE FROM StatusEntity WHERE dateTime < :from")
-    suspend fun removeOldStatus(from: Instant): Int
+    @Query("DELETE FROM StatusEntity WHERE dateTime < :fromDate")
+    suspend fun deleteOldStatuses(fromDate: String)
 }

@@ -14,13 +14,17 @@ data class StatusDetails(
     val status: StatusEntity,
 
     @Relation(
+        associateBy = Junction(
+            StatusAppCrossRef::class,
+            parentColumn = "status_id",
+            entityColumn = "app_id",
+        ),
         parentColumn = "id",
-        entityColumn = "statusId",
-        associateBy = Junction(StatusAppCrossRef::class)
+        entityColumn = "id",
     )
     val installedApps: List<InstalledAppEntity>
 ) {
     fun convertToCoreStatusDetails() = FocusStatusDetails(
-        status.id, status.dateTime, installedApps.map { it.convertToCoreInstalledApp() }
+        status.dateTime, installedApps.map { it.convertToCoreInstalledApp() }
     )
 }
