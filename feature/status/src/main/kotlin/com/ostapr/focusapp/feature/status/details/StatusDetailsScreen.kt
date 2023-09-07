@@ -1,8 +1,7 @@
-package com.ostapr.focusapp.feature.status.list
+package com.ostapr.focusapp.feature.status.details
 
-import androidx.compose.foundation.Canvas
+import android.content.res.Configuration.UI_MODE_NIGHT_MASK
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -22,24 +22,26 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getDrawable
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.ostapr.focusapp.core.designsystem.theme.FocusAppTheme
 import com.ostapr.focusapp.feature.status.R
-import com.ostapr.focusapp.feature.status.details.AppItemsLazyList
 import com.ostapr.focusapp.feature.status.model.UiInstalledAppItem
 import com.ostapr.focusapp.feature.status.model.UiStatusDetails
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toJavaLocalDateTime
+import kotlinx.datetime.toLocalDateTime
 import java.time.format.DateTimeFormatter
 
 @Composable
-internal fun StatusesListScreen(
-    statuses: List<UiStatusDetails>,
+internal fun StatusDetailsScreen(
+    statusDetails: UiStatusDetails,
+    filterText: String,
+    onFilterTextChanged: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     FocusAppTheme {
@@ -57,7 +59,8 @@ internal fun StatusesListScreen(
                         .height(16.dp)
                 )
 
-                val title = stringResource(R.string.statuses_title)
+                val title =
+                    "Apps List ${statusDetails.dateTime}"
                 Text(title, style = MaterialTheme.typography.headlineSmall)
 
                 Spacer(
@@ -66,67 +69,69 @@ internal fun StatusesListScreen(
                         .height(16.dp)
                 )
 
+                TextField(
+                    value = filterText,
+                    onValueChange = onFilterTextChanged,
+                    placeholder = { Text("Search for an app") },
+                    leadingIcon = { getDrawable(LocalContext.current, R.drawable.search_24) }
+                )
+
                 Spacer(
                     Modifier
                         .fillMaxWidth()
                         .height(16.dp)
                 )
 
-                StatusesLazyColumn(statuses)
+                AppItemsLazyList(statusDetails.apps)
             }
         }
     }
 }
 
 @Composable
-internal fun StatusesLazyColumn(statuses: List<UiStatusDetails>, modifier: Modifier = Modifier) {
+internal fun AppItemsLazyList(appInfos: List<UiInstalledAppItem>, modifier: Modifier = Modifier) {
     LazyColumn(modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
-        items(items = statuses, itemContent = { status ->
-            StatusItem(status)
+        items(items = appInfos, itemContent = { item ->
+            AppItem(item)
         })
     }
 }
 
 @Composable
-internal fun StatusItem(statusDetails: UiStatusDetails, modifier: Modifier = Modifier) {
+internal fun AppItem(appInfo: UiInstalledAppItem, modifier: Modifier = Modifier) {
     Row(
         modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        Text(statusDetails.dateTime)
+        Image(
+            painter = rememberDrawablePainter(appInfo.image),
+            contentDescription = appInfo.name,
+            modifier = Modifier.size(48.dp)
+        )
         Spacer(
             Modifier
                 .fillMaxHeight()
                 .width(16.dp)
         )
-        Text("${statusDetails.appsCount}")
-
-        Canvas(modifier = Modifier.size(24.dp)) {
-            val color = if (statusDetails.isFocused) Color.Green else Color.Red
-            drawCircle(color)
-        }
+        Text(appInfo.name, Modifier, style = MaterialTheme.typography.bodyLarge)
     }
 }
 
-@Preview()
 @Composable
-fun StatusesListScreenPreview() {
-    val statuses = listOf(
-        UiStatusDetails(
-            "1/1/23 8:00", apps = listOf(
-                UiInstalledAppItem(
-                    "App 1",
-                    LocalContext.current.getDrawable(R.drawable.touch_app_24)!!
-                ),
-                UiInstalledAppItem(
-                    "App 1",
-                    LocalContext.current.getDrawable(R.drawable.touch_app_24)!!
-                ),
-            ), isFocused = true
-        )
+@Preview(uiMode = UI_MODE_NIGHT_MASK)
+fun DetailsPreview() {
+    val context = LocalContext.current
+    val sampleUiStatusDetails = UiStatusDetails(
+        "7/09/23, 11:15",
+        apps = listOf(
+            UiInstalledAppItem("Facebook", context.getDrawable(R.drawable.touch_app_24)!!),
+            UiInstalledAppItem("Play Market", context.getDrawable(R.drawable.touch_app_24)!!),
+            UiInstalledAppItem("Some Game", context.getDrawable(R.drawable.touch_app_24)!!),
+        ),
+        isFocused = true
     )
-    StatusesListScreen(statuses)
+
+    StatusDetailsScreen(sampleUiStatusDetails, "", {})
 }

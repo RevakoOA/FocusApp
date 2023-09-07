@@ -30,3 +30,4 @@ include(":core:common")
 include(":core:status-gatherer")
 
 include(":feature:status")
+include(":core:domain")

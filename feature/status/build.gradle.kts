@@ -9,7 +9,6 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:designsystem"))
-
-    implementation(libs.androidx.activity.compose)
+    implementation(libs.kotlinx.datetime)
+    implementation(libs.accompanist.drawablepainter)
 }
