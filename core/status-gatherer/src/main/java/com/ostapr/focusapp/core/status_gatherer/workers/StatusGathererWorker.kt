@@ -1,12 +1,17 @@
 package com.ostapr.focusapp.core.status_gatherer.workers
 
 import android.content.Context
+import android.content.pm.ApplicationInfo.FLAG_SYSTEM
 import android.content.pm.PackageManager
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.ExistingPeriodicWorkPolicy.UPDATE
 import androidx.work.ForegroundInfo
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.OutOfQuotaPolicy
+import androidx.work.PeriodicWorkRequest
+import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkerParameters
 import com.ostapr.focusapp.core.common.dispatchers.Dispatcher
 import com.ostapr.focusapp.core.common.dispatchers.FocusAppDispatchers.IO
@@ -25,6 +30,7 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import java.util.concurrent.TimeUnit
+
 
 @HiltWorker
 class StatusGathererWorker @AssistedInject constructor(
@@ -46,21 +52,22 @@ class StatusGathererWorker @AssistedInject constructor(
 
         val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
         val status = FocusStatusDetails(id = 0, now, installedApps)
-         statusesRepo.apply {
+        statusesRepo.apply {
             removeOldStatuses()
             addStatus(status)
         }
 
-        GathererInitializer.initializeNextRequest(applicationContext, interval.minutes)
+        GathererInitializer.initializeStatusGatherer(applicationContext, interval.minutes, policy = UPDATE)
 
         Result.success()
     }
 
     private fun fetchNonSystemApps(): List<InstalledAppInfo> {
         val pm = applicationContext.packageManager
+
         val packages = pm.getInstalledApplications(PackageManager.GET_META_DATA)
-        val nonSystemPackages = packages.filter { packageInfo ->
-            pm.getLaunchIntentForPackage(packageInfo.packageName) != null
+        val nonSystemPackages = packages.filter { appInfo ->
+            appInfo.flags and FLAG_SYSTEM == 0
         }
 
         return nonSystemPackages.map { packageInfo ->
@@ -76,13 +83,8 @@ class StatusGathererWorker @AssistedInject constructor(
         /**
          * Expedited one time work to gather status.
          */
-        fun scheduleRequest(delay: Minutes) = OneTimeWorkRequestBuilder<StatusGathererWorker>()
-            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-            .apply {
-                if (delay.toLong() > 0) {
-                    setInitialDelay(delay.toLong(), TimeUnit.MINUTES)
-                }
-            }
-            .build()
+        fun scheduleRequest(interval: Minutes) =
+            PeriodicWorkRequestBuilder<StatusGathererWorker>(interval.toDuration())
+                .build()
     }
 }

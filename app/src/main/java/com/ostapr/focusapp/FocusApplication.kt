@@ -25,6 +25,6 @@ class FocusApplication : Application(), Configuration.Provider {
     override fun onCreate() {
         super.onCreate()
 
-        GathererInitializer.initializeNextRequest(this, Minutes(0))
+        GathererInitializer.initializeStatusGatherer(this, Minutes(0))
     }
 }
