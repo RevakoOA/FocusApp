@@ -1,5 +1,8 @@
 package com.ostapr.focusapp.core.network.di
 
+import com.ostapr.focusapp.core.network.FocusAppNetworkDataSource
+import com.ostapr.focusapp.core.network.retrofit.RetrofitFocusAppNetwork
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -9,10 +12,15 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object RetrofitModule {
-    @Provides
-    @Singleton
-    fun providesNetworkJson(): Json = Json {
-        ignoreUnknownKeys = true
+interface RetrofitModule {
+    @Binds
+    fun providesNetworkDataSource(impl: RetrofitFocusAppNetwork): FocusAppNetworkDataSource
+
+    companion object {
+        @Provides
+        @Singleton
+        fun providesNetworkJson(): Json = Json {
+            ignoreUnknownKeys = true
+        }
     }
 }

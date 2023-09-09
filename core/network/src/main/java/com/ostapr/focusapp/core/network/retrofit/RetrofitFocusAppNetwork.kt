@@ -7,7 +7,7 @@ import com.ostapr.focusapp.core.model.data.DelayInfo as CoreDelayInfo
 import com.ostapr.focusapp.core.network.retrofit.RetrofitFocusAppNetworkApi.Companion.FOCUS_APP_BASE_URL
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
-import org.json.JSONArray
+import okhttp3.ResponseBody
 import retrofit2.Retrofit
 import retrofit2.http.GET
 import javax.inject.Inject
@@ -17,7 +17,7 @@ private interface RetrofitFocusAppNetworkApi {
 
     /** Response is parsed in [DelayInfo]. */
     @GET("api/config")
-    suspend fun getDelay(): JSONArray
+    suspend fun getDelay(): ResponseBody
 
     companion object {
         // TODO(ostapr) consider to move it to secret config file.
@@ -42,5 +42,5 @@ class RetrofitFocusAppNetwork @Inject constructor(
 
 
     override suspend fun getUpdateDelay(): CoreDelayInfo =
-        DelayInfo.parseFromJsonArray(networkApi.getDelay()).toCoreModel()
+        DelayInfo.parseFromResponse(networkApi.getDelay()).toCoreModel()
 }
