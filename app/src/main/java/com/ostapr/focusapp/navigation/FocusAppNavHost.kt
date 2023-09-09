@@ -20,7 +20,7 @@ fun FocusAppNavHost(
         startDestination = startDestination,
         modifier = modifier,
     ) {
-        statusesScreen(onStatusClick = { uiStatus -> navController.navigateToStatus(uiStatus)})
+        statusesScreen(onStatusClick = { uiStatus -> navController.navigateToStatus(uiStatus.id)})
         statusDetailsScreen()
     }
 }
