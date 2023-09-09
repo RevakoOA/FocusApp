@@ -45,7 +45,7 @@ class StatusGathererWorker @AssistedInject constructor(
         val installedApps = fetchNonSystemApps()
 
         val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-        val status = FocusStatusDetails(now, installedApps)
+        val status = FocusStatusDetails(id = 0, now, installedApps)
          statusesRepo.apply {
             removeOldStatuses()
             addStatus(status)

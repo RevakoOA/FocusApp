@@ -27,6 +27,9 @@ class OfflineOnlyStatusesRepo @Inject constructor(
             list.map { it.convertToCoreStatusDetails() }
         }
 
+    override fun getStatus(id: Long): Flow<FocusStatusDetails> =
+        focusAppDao.getStatus(id).map { it.convertToCoreStatusDetails() }
+
     override suspend fun addStatus(statusDetails: FocusStatusDetails) = withContext(ioDispatcher) {
         val statusId =
             focusAppDao.insertStatus(StatusEntity.createFromCoreStatusDetails(statusDetails))

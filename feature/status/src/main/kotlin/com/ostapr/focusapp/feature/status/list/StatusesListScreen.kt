@@ -114,12 +114,11 @@ internal fun StatusItem(
         modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
-            .clickable { onStatusClick(statusDetails) }
-        ,
+            .clickable { onStatusClick(statusDetails) },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
 
-    ) {
+        ) {
         Text(statusDetails.dateTime)
         Spacer(
             Modifier
@@ -140,7 +139,9 @@ internal fun StatusItem(
 fun StatusesListScreenPreview() {
     val statuses = listOf(
         UiStatusDetails(
-            "1/1/23 8:00", apps = listOf(
+            id = 1,
+            "1/1/23 8:00",
+            apps = listOf(
                 UiInstalledAppItem(
                     "App 1",
                     LocalContext.current.getDrawable(R.drawable.touch_app_24)!!
@@ -149,7 +150,8 @@ fun StatusesListScreenPreview() {
                     "App 1",
                     LocalContext.current.getDrawable(R.drawable.touch_app_24)!!
                 ),
-            ), isFocused = true
+            ),
+            isFocused = true
         )
     )
     StatusesListScreen(statuses, {})

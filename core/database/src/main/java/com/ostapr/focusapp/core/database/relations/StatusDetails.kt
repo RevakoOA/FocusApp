@@ -25,6 +25,6 @@ data class StatusDetails(
     val installedApps: List<InstalledAppEntity>
 ) {
     fun convertToCoreStatusDetails() = FocusStatusDetails(
-        status.dateTime, installedApps.map { it.convertToCoreInstalledApp() }
+        status.id, status.dateTime, installedApps.map { it.convertToCoreInstalledApp() }
     )
 }

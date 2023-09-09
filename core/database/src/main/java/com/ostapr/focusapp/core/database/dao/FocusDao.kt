@@ -33,6 +33,9 @@ interface FocusDao {
     @Query("SELECT * FROM StatusEntity")
     fun getStatuses(): Flow<List<StatusDetails>>
 
+    @Query("SELECT * FROM StatusEntity WHERE id = :id")
+    fun getStatus(id: Long): Flow<StatusDetails>
+
     @Query("DELETE FROM StatusEntity WHERE dateTime < :fromDate")
     suspend fun deleteOldStatuses(fromDate: String)
 }

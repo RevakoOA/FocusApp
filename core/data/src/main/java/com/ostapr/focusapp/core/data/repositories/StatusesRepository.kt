@@ -12,6 +12,8 @@ interface StatusesRepository {
 
     fun getStatuses(): Flow<List<FocusStatusDetails>>
 
+    fun getStatus(id: Long): Flow<FocusStatusDetails>
+
     suspend fun addStatus(statusDetails: FocusStatusDetails)
 
     suspend fun removeOldStatuses(

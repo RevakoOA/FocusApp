@@ -8,6 +8,7 @@ import kotlinx.datetime.LocalDateTime
 
 
 data class UiStatusDetails(
+    val id: Long,
     val dateTime: String,
     val apps: List<UiInstalledAppItem>,
     val isFocused: Boolean

@@ -14,11 +14,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,6 +31,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.getDrawable
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.ostapr.focusapp.core.designsystem.theme.FocusAppTheme
 import com.ostapr.focusapp.feature.status.R
@@ -37,14 +40,15 @@ import com.ostapr.focusapp.feature.status.model.UiStatusDetails
 
 @Composable
 internal fun StatusDetailsScreenRoute(
-    statusId: Long,
-    ) {
-    StatusDetailsScreen(UiStatusDetails("time", emptyList(), true))
+    viewModel: StatusDetailsViewModel = hiltViewModel()
+) {
+    val statusState: StatusUiState by viewModel.statusDetailsState.collectAsState()
+    StatusDetailsScreen(statusState)
 }
 
 @Composable
 internal fun StatusDetailsScreen(
-    statusDetails: UiStatusDetails,
+    statusState: StatusUiState,
     modifier: Modifier = Modifier
 ) {
     var filterText: String by rememberSaveable { mutableStateOf("") }
@@ -64,37 +68,54 @@ internal fun StatusDetailsScreen(
                         .height(16.dp)
                 )
 
-                val title =
-                    "Apps List ${statusDetails.dateTime}"
-                Text(title, style = MaterialTheme.typography.headlineSmall)
+                when (statusState) {
+                    is StatusUiState.Loading -> {
+                        LinearProgressIndicator()
+                    }
 
-                Spacer(
-                    Modifier
-                        .fillMaxWidth()
-                        .height(16.dp)
-                )
+                    is StatusUiState.Success -> {
+                        val statusDetails = statusState.statusDetails
+                        val title =
+                            "Apps List ${statusDetails.dateTime}"
+                        Text(title, style = MaterialTheme.typography.headlineSmall)
 
-                TextField(
-                    value = filterText,
-                    onValueChange = { newText -> filterText = newText },
-                    placeholder = { Text("Search for an app") },
-                    leadingIcon = { getDrawable(LocalContext.current, R.drawable.search_24) }
-                )
+                        Spacer(
+                            Modifier
+                                .fillMaxWidth()
+                                .height(16.dp)
+                        )
 
-                Spacer(
-                    Modifier
-                        .fillMaxWidth()
-                        .height(16.dp)
-                )
+                        TextField(
+                            value = filterText,
+                            onValueChange = { newText -> filterText = newText },
+                            placeholder = { Text("Search for an app") },
+                            leadingIcon = {
+                                getDrawable(
+                                    LocalContext.current,
+                                    R.drawable.search_24
+                                )
+                            }
+                        )
 
-                AppItemsLazyList(statusDetails.apps)
+                        Spacer(
+                            Modifier
+                                .fillMaxWidth()
+                                .height(16.dp)
+                        )
+
+                        AppItemsLazyList(statusDetails.apps)
+                    }
+                }
             }
         }
     }
 }
 
 @Composable
-internal fun AppItemsLazyList(appInfos: List<UiInstalledAppItem>, modifier: Modifier = Modifier) {
+internal fun AppItemsLazyList(
+    appInfos: List<UiInstalledAppItem>,
+    modifier: Modifier = Modifier
+) {
     LazyColumn(modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
         items(items = appInfos, itemContent = { item ->
             AppItem(item)
@@ -129,6 +150,7 @@ internal fun AppItem(appInfo: UiInstalledAppItem, modifier: Modifier = Modifier)
 fun DetailsPreview() {
     val context = LocalContext.current
     val sampleUiStatusDetails = UiStatusDetails(
+        id = 1,
         "7/09/23, 11:15",
         apps = listOf(
             UiInstalledAppItem("Facebook", context.getDrawable(R.drawable.touch_app_24)!!),
@@ -138,5 +160,5 @@ fun DetailsPreview() {
         isFocused = true
     )
 
-    StatusDetailsScreen(sampleUiStatusDetails)
+    StatusDetailsScreen(StatusUiState.Success(sampleUiStatusDetails))
 }
