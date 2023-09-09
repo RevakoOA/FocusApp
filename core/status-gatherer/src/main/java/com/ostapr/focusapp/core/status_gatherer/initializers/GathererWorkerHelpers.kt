@@ -7,7 +7,7 @@ import android.content.Context
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.work.ForegroundInfo
-import com.ostapr.focusapp.core.`status-gatherer`.R
+import com.ostapr.focusapp.core.status_gatherer.R
 
 private const val GATHERER_NOTIFICATION_ID = 0
 private const val GATHERER_NOTIFICATION_CHANNEL_ID = "GathererNotificationChannel"

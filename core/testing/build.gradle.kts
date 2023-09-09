@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.ostapr.core.testing"
+    namespace = "com.ostapr.focusapp.core.testing"
 }
 
 dependencies {
