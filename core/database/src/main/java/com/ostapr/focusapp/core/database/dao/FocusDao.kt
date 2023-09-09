@@ -30,7 +30,7 @@ interface FocusDao {
      * so all remaining statuses are recent statuses.
      */
     @Transaction
-    @Query("SELECT * FROM StatusEntity")
+    @Query("SELECT * FROM StatusEntity ORDER BY StatusEntity.dateTime DESC")
     fun getStatuses(): Flow<List<StatusDetails>>
 
     @Query("SELECT * FROM StatusEntity WHERE id = :id")

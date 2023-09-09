@@ -113,7 +113,7 @@ internal fun StatusItem(
     Row(
         modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp)
+            .padding(vertical = 16.dp)
             .clickable { onStatusClick(statusDetails) },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
