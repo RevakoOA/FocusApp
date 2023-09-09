@@ -14,12 +14,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -31,19 +34,21 @@ import com.ostapr.focusapp.core.designsystem.theme.FocusAppTheme
 import com.ostapr.focusapp.feature.status.R
 import com.ostapr.focusapp.feature.status.model.UiInstalledAppItem
 import com.ostapr.focusapp.feature.status.model.UiStatusDetails
-import kotlinx.datetime.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toJavaLocalDateTime
-import kotlinx.datetime.toLocalDateTime
-import java.time.format.DateTimeFormatter
+
+@Composable
+internal fun StatusDetailsScreenRoute(
+    statusId: Long,
+    ) {
+    StatusDetailsScreen(UiStatusDetails("time", emptyList(), true))
+}
 
 @Composable
 internal fun StatusDetailsScreen(
     statusDetails: UiStatusDetails,
-    filterText: String,
-    onFilterTextChanged: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var filterText: String by rememberSaveable { mutableStateOf("") }
+
     FocusAppTheme {
         Surface(
             modifier.fillMaxSize(),
@@ -71,7 +76,7 @@ internal fun StatusDetailsScreen(
 
                 TextField(
                     value = filterText,
-                    onValueChange = onFilterTextChanged,
+                    onValueChange = { newText -> filterText = newText },
                     placeholder = { Text("Search for an app") },
                     leadingIcon = { getDrawable(LocalContext.current, R.drawable.search_24) }
                 )
@@ -133,5 +138,5 @@ fun DetailsPreview() {
         isFocused = true
     )
 
-    StatusDetailsScreen(sampleUiStatusDetails, "", {})
+    StatusDetailsScreen(sampleUiStatusDetails)
 }

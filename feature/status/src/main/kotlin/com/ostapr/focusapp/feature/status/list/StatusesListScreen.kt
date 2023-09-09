@@ -1,7 +1,7 @@
 package com.ostapr.focusapp.feature.status.list
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,8 +18,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,19 +27,32 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
-import com.google.accompanist.drawablepainter.rememberDrawablePainter
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ostapr.focusapp.core.designsystem.theme.FocusAppTheme
 import com.ostapr.focusapp.feature.status.R
-import com.ostapr.focusapp.feature.status.details.AppItemsLazyList
+import com.ostapr.focusapp.feature.status.StatusesViewModel
 import com.ostapr.focusapp.feature.status.model.UiInstalledAppItem
 import com.ostapr.focusapp.feature.status.model.UiStatusDetails
-import kotlinx.datetime.toJavaLocalDateTime
-import java.time.format.DateTimeFormatter
+
+@Composable
+internal fun StatusesListRoute(
+    onStatusClick: (UiStatusDetails) -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: StatusesViewModel = hiltViewModel(),
+) {
+    val statuses: List<UiStatusDetails> by viewModel.statusesFlow.collectAsStateWithLifecycle()
+
+    StatusesListScreen(
+        statuses,
+        onStatusClick,
+    )
+}
 
 @Composable
 internal fun StatusesListScreen(
     statuses: List<UiStatusDetails>,
+    onStatusClick: (UiStatusDetails) -> Unit,
     modifier: Modifier = Modifier
 ) {
     FocusAppTheme {
@@ -72,29 +85,40 @@ internal fun StatusesListScreen(
                         .height(16.dp)
                 )
 
-                StatusesLazyColumn(statuses)
+                StatusesLazyColumn(statuses, onStatusClick)
             }
         }
     }
 }
 
 @Composable
-internal fun StatusesLazyColumn(statuses: List<UiStatusDetails>, modifier: Modifier = Modifier) {
+internal fun StatusesLazyColumn(
+    statuses: List<UiStatusDetails>,
+    onStatusClick: (UiStatusDetails) -> Unit,
+    modifier: Modifier = Modifier
+) {
     LazyColumn(modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
         items(items = statuses, itemContent = { status ->
-            StatusItem(status)
+            StatusItem(status, onStatusClick)
         })
     }
 }
 
 @Composable
-internal fun StatusItem(statusDetails: UiStatusDetails, modifier: Modifier = Modifier) {
+internal fun StatusItem(
+    statusDetails: UiStatusDetails,
+    onStatusClick: (UiStatusDetails) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Row(
         modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .padding(vertical = 8.dp)
+            .clickable { onStatusClick(statusDetails) }
+        ,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
+
     ) {
         Text(statusDetails.dateTime)
         Spacer(
@@ -128,5 +152,5 @@ fun StatusesListScreenPreview() {
             ), isFocused = true
         )
     )
-    StatusesListScreen(statuses)
+    StatusesListScreen(statuses, {})
 }

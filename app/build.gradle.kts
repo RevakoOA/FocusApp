@@ -60,6 +60,10 @@ dependencies {
     implementation(project(":feature:status"))
 
     implementation(project(":core:ui"))
+    implementation(project(":core:common"))
+    implementation(project(":core:model"))
+    implementation(project(":core:data"))
+    implementation(project(":core:status-gatherer"))
     implementation(project(":core:designsystem"))
 
     implementation(libs.androidx.ui.tooling.preview.android)
@@ -79,6 +83,7 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.kotlinx.coroutines.guava)
     implementation(libs.coil.kt)
+    implementation(libs.hilt.ext.work)
 }
 
 // androidx.test is forcing JUnit, 4.12. This forces it to use 4.13
