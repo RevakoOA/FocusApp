@@ -17,4 +17,4 @@ data class UiStatusDetails(
         get() = apps.size
 }
 
-data class UiInstalledAppItem(val name: String, val image: Drawable)
+data class UiInstalledAppItem(val name: String, val image: Drawable?)

@@ -1,6 +1,7 @@
 package com.ostapr.focusapp.feature.status.model
 
 import android.content.Context
+import android.content.pm.PackageManager
 import com.ostapr.focusapp.core.domain.DateTimeFormatterUseCase
 import com.ostapr.focusapp.core.model.data.FocusStatusDetails
 import com.ostapr.focusapp.core.model.data.InstalledAppInfo
@@ -10,10 +11,13 @@ import javax.inject.Inject
 /** Convert Core entity to Ui entity. */
 class UiStatusDetailsMapper @Inject constructor(
     private val dateFormatter: DateTimeFormatterUseCase,
-    @ApplicationContext private val appContext: Context
+    @ApplicationContext private val appContext: Context,
+    private val forPreview: Boolean = false,
 ) {
 
-    private val packageManager = appContext.packageManager
+    /** Package manager is not supported in the preview mode. */
+    private val packageManager: PackageManager?
+        get() = if (!forPreview) appContext.packageManager else null
 
     fun convertCoreToUi(cores: List<FocusStatusDetails>): List<UiStatusDetails> =
         cores.map(this::convertCoreToUi)
@@ -29,6 +33,6 @@ class UiStatusDetailsMapper @Inject constructor(
 
     private fun convertCoreToUi(core: InstalledAppInfo) = UiInstalledAppItem(
         name = core.appName,
-        image = packageManager.getApplicationIcon(core.packageName)
+        image = packageManager?.getApplicationIcon(core.packageName)
     )
 }

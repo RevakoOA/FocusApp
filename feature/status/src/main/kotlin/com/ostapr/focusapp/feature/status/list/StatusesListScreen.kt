@@ -30,10 +30,15 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ostapr.focusapp.core.designsystem.theme.FocusAppTheme
+import com.ostapr.focusapp.core.domain.DateTimeFormatterUseCase
+import com.ostapr.focusapp.core.model.data.FocusStatusDetails
+import com.ostapr.focusapp.core.model.data.InstalledAppInfo
 import com.ostapr.focusapp.feature.status.R
 import com.ostapr.focusapp.feature.status.StatusesViewModel
 import com.ostapr.focusapp.feature.status.model.UiInstalledAppItem
 import com.ostapr.focusapp.feature.status.model.UiStatusDetails
+import com.ostapr.focusapp.feature.status.model.UiStatusDetailsMapper
+import kotlinx.datetime.LocalDateTime
 
 @Composable
 internal fun StatusesListRoute(
@@ -113,12 +118,11 @@ internal fun StatusItem(
     Row(
         modifier
             .fillMaxWidth()
-            .padding(vertical = 16.dp)
-            .clickable { onStatusClick(statusDetails) },
+            .clickable { onStatusClick(statusDetails) }
+            .padding(vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
-
-        ) {
+    ) {
         Text(statusDetails.dateTime)
         Spacer(
             Modifier
@@ -137,6 +141,9 @@ internal fun StatusItem(
 @Preview()
 @Composable
 fun StatusesListScreenPreview() {
+    val mapper =
+        UiStatusDetailsMapper(DateTimeFormatterUseCase(), LocalContext.current, forPreview = true)
+
     val statuses = listOf(
         UiStatusDetails(
             id = 1,
@@ -147,12 +154,30 @@ fun StatusesListScreenPreview() {
                     LocalContext.current.getDrawable(R.drawable.touch_app_24)!!
                 ),
                 UiInstalledAppItem(
-                    "App 1",
+                    "App 2",
                     LocalContext.current.getDrawable(R.drawable.touch_app_24)!!
                 ),
             ),
             isFocused = true
-        )
+        ),
+        mapper.convertCoreToUi(
+            FocusStatusDetails(
+                id = 2,
+                LocalDateTime(2023, 1, 1, 9, 0, 0, 0),
+                installedApps = listOf(
+                    InstalledAppInfo("Instagram", "Package name")
+                )
+
+            )
+        ),
+        mapper.convertCoreToUi(
+            FocusStatusDetails(
+                id = 3,
+                LocalDateTime(2023, 1, 1, 10, 0, 0, 0),
+                installedApps = MutableList(16) { i ->
+                    InstalledAppInfo("App $i", "Package $i")
+                }
+            ))
     )
     StatusesListScreen(statuses, {})
 }
