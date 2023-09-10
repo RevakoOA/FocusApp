@@ -45,19 +45,26 @@ class StatusGathererWorker @AssistedInject constructor(
         applicationContext.gathererForegroundInfo()
 
     override suspend fun doWork(): Result = withContext(ioDispatcher) {
-        // TODO(ostapr) store previous delay and use if request failed. (see DataStore)
-        val interval = delayRepo.getDelay()
-
         val installedApps = fetchNonSystemApps()
 
         val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
         val status = FocusStatusDetails(id = 0, now, installedApps)
+
         statusesRepo.apply {
             removeOldStatuses()
             addStatus(status)
         }
 
-        GathererInitializer.initializeStatusGatherer(applicationContext, interval.minutes, policy = UPDATE)
+        try {
+            val interval = delayRepo.getDelay()
+            GathererInitializer.initializeStatusGatherer(
+                applicationContext,
+                interval.minutes,
+                policy = UPDATE
+            )
+        } catch (e: Exception) {
+            // do not update period as new data are not available
+        }
 
         Result.success()
     }
