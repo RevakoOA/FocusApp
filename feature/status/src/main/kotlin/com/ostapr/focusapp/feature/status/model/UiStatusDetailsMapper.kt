@@ -9,11 +9,18 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 /** Convert Core entity to Ui entity. */
-class UiStatusDetailsMapper @Inject constructor(
+
+class UiStatusDetailsMapper constructor(
     private val dateFormatter: DateTimeFormatterUseCase,
-    @ApplicationContext private val appContext: Context,
+    private val appContext: Context,
     private val forPreview: Boolean = false,
 ) {
+
+    @Inject
+    constructor(
+        dateFormatter: DateTimeFormatterUseCase,
+        @ApplicationContext appContext: Context
+    ) : this(dateFormatter, appContext, forPreview = false)
 
     /** Package manager is not supported in the preview mode. */
     private val packageManager: PackageManager?
