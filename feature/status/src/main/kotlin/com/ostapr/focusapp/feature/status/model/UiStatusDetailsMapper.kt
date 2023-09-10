@@ -40,6 +40,11 @@ class UiStatusDetailsMapper constructor(
 
     private fun convertCoreToUi(core: InstalledAppInfo) = UiInstalledAppItem(
         name = core.appName,
-        image = packageManager?.getApplicationIcon(core.packageName)
+        image = try {
+            packageManager?.getApplicationIcon(core.packageName)
+        } catch(e: PackageManager.NameNotFoundException) {
+            // App was deleted, image cannot be fetched as not stored.
+            null
+        }
     )
 }
