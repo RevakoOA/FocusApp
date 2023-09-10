@@ -1,8 +1,11 @@
 package com.ostapr.focusapp.core.status_gatherer.workers
 
 import android.content.Context
+import android.content.Intent
 import android.content.pm.ApplicationInfo.FLAG_SYSTEM
 import android.content.pm.PackageManager
+import android.os.Build
+import android.os.Build.VERSION_CODES.TIRAMISU
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.ExistingPeriodicWorkPolicy
@@ -69,27 +72,50 @@ class StatusGathererWorker @AssistedInject constructor(
         Result.success()
     }
 
+    /**
+     *  Using package manager gather list of non system apps.
+     *
+     *  Filtering logic:
+     *  A good rule of thumb is if the app does not contain the main activity,
+     *  it is not a user-facing application and could be considered a system app.
+     *
+     * @returns list of non system apps.
+     */
     private fun fetchNonSystemApps(): List<InstalledAppInfo> {
         val pm = applicationContext.packageManager
+        val mainIntent = Intent(Intent.ACTION_MAIN, null)
+        mainIntent.addCategory(Intent.CATEGORY_LAUNCHER)
 
-        val packages = pm.getInstalledApplications(PackageManager.GET_META_DATA)
-        val nonSystemPackages = packages.filter { appInfo ->
-            appInfo.flags and FLAG_SYSTEM == 0
+        val resolvedNonSystemAppsInfos = if (Build.VERSION.SDK_INT >= TIRAMISU) {
+            pm.queryIntentActivities(
+                mainIntent,
+                PackageManager.ResolveInfoFlags.of(0L)
+            )
+        } else {
+            pm.queryIntentActivities(mainIntent, 0)
         }
 
-        return nonSystemPackages.map { packageInfo ->
-            val appName = pm.getApplicationLabel(packageInfo).toString()
+        return resolvedNonSystemAppsInfos.map { appInfo ->
+            val resources = pm.getResourcesForApplication(appInfo.activityInfo.applicationInfo)
+
+            val appName = if (appInfo.activityInfo.labelRes != 0) {
+                // getting proper label from resources
+                resources.getString(appInfo.activityInfo.labelRes)
+            } else {
+                // getting it out of app info - equivalent to context.packageManager.getApplicationInfo
+                appInfo.activityInfo.applicationInfo.loadLabel(pm).toString()
+            }
+
             // TODO(ostapr) fetch drawable, store to Internal disk memory.
             //  Will allow to access icon even if the app is deleted. Currently use packageName.
+            // val drawable = appInfo.activityInfo.applicationInfo.loadIcon(pm)
 
-            InstalledAppInfo(appName, packageInfo.packageName)
+            InstalledAppInfo(appName, appInfo.activityInfo.packageName)
         }
     }
 
     companion object {
-        /**
-         * Expedited one time work to gather status.
-         */
+        /** Periodic work request to gather status. */
         fun scheduleRequest(interval: Minutes) =
             PeriodicWorkRequestBuilder<StatusGathererWorker>(interval.toDuration())
                 .build()
