@@ -103,7 +103,10 @@ internal fun StatusDetailsScreen(
                                 .height(16.dp)
                         )
 
-                        AppItemsLazyList(statusDetails.apps)
+                        val appsToShow = statusDetails.apps.filter { appItem ->
+                            appItem.name.contains(filterText, ignoreCase = true)
+                        }
+                        AppItemsLazyList(appsToShow)
                     }
                 }
             }
