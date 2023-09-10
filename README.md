@@ -1,5 +1,7 @@
 ### About
 
+![Screenshot showing Status feature screens](docs/images/status_feature.png "Screenshot showing Status feature screen, list of statuses, and status details")
+
 Focus App periodically gather the installed apps even when the app is closed.
 List of the installed apps called `statuses` ([FocusStatusDetails]).
 Statuses are stored in the local database and can be shown.
